@@ -1,4 +1,4 @@
-from data.src.model import LeNet
+from src.model import LeNet
 
 model = LeNet()
 print(model)
