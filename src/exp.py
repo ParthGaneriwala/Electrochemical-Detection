@@ -19,7 +19,7 @@ def load_dataset(dataset_path):
     for directory in tqdm(class_folders, desc="Loading Concentration"):
         class_path = os.path.join(dataset_path, directory)
         class_label = directory
-        for file in os.listdir(class_path):
+        for file in tqdm(os.listdir(class_path), desc="Loading Values"):
             for fi in os.listdir(os.path.join(class_path,file)):
                 if fi == "PNG":
                     file_path = os.path.join(class_path, file, fi)
@@ -27,14 +27,15 @@ def load_dataset(dataset_path):
                         if f.endswith('.png'):
                             img_path = os.path.join(file_path, f)
                             image = cv2.imread(img_path)
-                            image = cv2.resize(image, (64, 64)) # Resize image to fit LeNet architecture
+                            image = cv2.resize(image, (128, 128)) # Resize image to fit LeNet architecture
                             images.append(image)
                             labels.append(file)
     return np.array(images), np.array(labels)
 
 # Load dataset
-dataset_path = 'D:\AI Project with Parth\Cd2+' # Change to your dataset folder path
+dataset_path = 'D:\AI Project with Parth\Cu2+' # Change to your dataset folder path
 images, labels = load_dataset(dataset_path)
+print(labels)
 
 # Preprocess images and labels
 images = images.astype('float32') / 255.0
@@ -43,11 +44,15 @@ labels = label_encoder.fit_transform(labels)
 labels = to_categorical(labels)
 
 # Split dataset into training and testing sets
+# train_images, test_images, train_labels, test_labels = train_test_split(images, labels, test_size=0.2, random_state=42)
+
 train_images, test_images, train_labels, test_labels = train_test_split(images, labels, test_size=0.2, random_state=42)
+
+train_images, val_images, train_labels, val_labels = train_test_split(train_images, train_labels, test_size=0.25, random_state=1) # 0.25 x 0.8 = 0.2
 
 # Define LeNet model architecture
 model = Sequential()
-model.add(Conv2D(6, kernel_size=(5, 5), strides=(1, 1), activation='relu', input_shape=(64,64,3)))
+model.add(Conv2D(6, kernel_size=(5, 5), strides=(1, 1), activation='relu', input_shape=(128,128,3)))
 model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 model.add(Conv2D(16, kernel_size=(5, 5), strides=(1, 1), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
@@ -69,11 +74,11 @@ lr_scheduler_callback = LearningRateScheduler(lr_scheduler)
 
 # Compile the model
 optimizer = Adam(learning_rate=0.001)
-model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
 # Train the model
 print("Training LeNet model...")
-history = model.fit(train_images, train_labels, batch_size=32, epochs=100, validation_data=(test_images, test_labels), callbacks=[early_stopping, lr_scheduler_callback], verbose=1)
+history = model.fit(train_images, train_labels, batch_size=32, epochs=100, validation_data=(val_images, val_labels), callbacks=[early_stopping, lr_scheduler_callback], verbose=1)
 #Evaluation
 plt.style.use('seaborn')
 plt.figure(figsize=(6,6))
