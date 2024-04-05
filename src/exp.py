@@ -9,6 +9,7 @@ from tensorflow.keras.callbacks import EarlyStopping, LearningRateScheduler
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.utils import to_categorical
 from tqdm import tqdm
+from matplotlib import pyplot as plt
 
 # Function to load images and labels from the dataset folder
 def load_dataset(dataset_path):
@@ -73,7 +74,21 @@ model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['ac
 # Train the model
 print("Training LeNet model...")
 history = model.fit(train_images, train_labels, batch_size=32, epochs=100, validation_data=(test_images, test_labels), callbacks=[early_stopping, lr_scheduler_callback], verbose=1)
+#Evaluation
+plt.style.use('seaborn')
+plt.figure(figsize=(6,6))
+plt.plot(history.history['loss'], color='b', label="training loss")
+plt.plot(history.history['val_loss'], color='r', label="validation loss")
+plt.legend()
+plt.show()
 
+plt.figure()
+
+plt.figure(figsize=(6,6))
+plt.plot(history.history['accuracy'], color='b', label="training accuracy")
+plt.plot(history.history['val_accuracy'], color='r',label="validation accuracy")
+plt.legend()
+plt.show()
 # Evaluate the model
 print("Evaluating the model...")
 loss, accuracy = model.evaluate(test_images, test_labels)
