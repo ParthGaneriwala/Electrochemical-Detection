@@ -54,7 +54,7 @@ def load_dataset(dataset_path):
     return np.array(images), np.array(labels)
 
 # Load dataset
-dataset_path = 'D:\ElectroChemicalData\Cu2+' # Change to your dataset folder path
+dataset_path = 'C:\Cd2+' # Change to your dataset folder path
 images, labels = load_dataset(dataset_path)
 print(labels)
 
@@ -145,3 +145,4 @@ test_predictions = model.predict(test_images)
 
 # Visualize predictions on a subset of test images
 visualize_predictions(test_images, test_labels, test_predictions)
+
