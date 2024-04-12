@@ -62,7 +62,6 @@ labels = label_encoder.fit_transform(labels)
 labels = to_categorical(labels)
 
 # Split dataset into training and testing sets
-# train_images, test_images, train_labels, test_labels = train_test_split(images, labels, test_size=0.2, random_state=42)
 
 train_images, test_images, train_labels, test_labels = train_test_split(images, labels, test_size=0.2, random_state=42)
 
