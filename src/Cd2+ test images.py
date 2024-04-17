@@ -1,5 +1,6 @@
 import os
 import tempfile
+from datetime import datetime
 
 import numpy as np
 import cv2
@@ -45,7 +46,7 @@ def load_dataset(dataset_path):
                     image = cv2.imread(png_path)
 
                     # # Resize the image to fit the CNN model architecture
-                    # image = cv2.resize(image, (128, 128))
+                    image = cv2.resize(image, (128, 128))
 
                     # Append the image and label to the lists
                     images.append(image)
@@ -96,7 +97,7 @@ checkpoint_callback = ModelCheckpoint(filepath='model_checkpoint.h5', monitor='v
 # Compile the model
 optimizer = Adam(learning_rate=0.0003)
 model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
-log_dir = r"C:\GitHub Projects\Runs"
+log_dir = r"C:\GitHub Projects\Runs"+ datetime.now().strftime("%Y%m%d-%H%M%S")
 model_checkpoint_callback = tensorflow.keras.callbacks.ModelCheckpoint(
     filepath=log_dir)
 # Train the model
