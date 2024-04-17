@@ -35,19 +35,3 @@ class LeNet(nn.Module):
         '''
         size = x.size()[1:]
         return np.prod(size)
-# import keras
-# from keras.models import Sequential
-# from keras.layers import Conv2D
-# from keras.layers import MaxPooling2D
-# from keras.layers import Flatten
-# from keras.layers import Dense
-# classifier = Sequential()
-# classifier.add(Conv2D(6, kernel_size=(5,5), activation="tanh", input_shape=(64, 64, 3)))
-# classifier.add(MaxPooling2D(pool_size=(2,2)))
-# classifier.add(Conv2D(16, kernel_size=(5,5), activation="tanh"))
-# classifier.add(MaxPooling2D(pool_size=(2,2)))
-# classifier.add(Flatten())
-# classifier.add(Dense(120, activation="tanh"))
-# classifier.add(Dense(84, activation="tanh"))
-# classifier.add(Dense(5, activation="tanh"))
-# classifier.compile(loss = keras.metrics.mse, optimizer = keras.optimizers.Adam(), metrics=["accuracy"])
