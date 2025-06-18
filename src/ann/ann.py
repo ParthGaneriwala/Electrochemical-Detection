@@ -15,6 +15,14 @@ from tqdm import tqdm
 from tensorflow.keras.optimizers import Adam, SGD
 
 
+MAX_LEN = 960
+
+def pad_sequence(seq, target_len):
+    if len(seq) >= target_len:
+        return seq[:target_len]
+    else:
+        return seq + [0.0] * (target_len - len(seq))
+
 # Function to load data from text files
 def load_dataset(dataset_path):
     data = []
@@ -66,18 +74,25 @@ def load_dataset(dataset_path):
                                 coords.append(y)
 
                             # Append x and y coordinates as a tuple to data
+                            coords = pad_sequence(coords, MAX_LEN)
                             data.append(coords)
+
                             # data.append(y_coords)
 
                             # Append the label (concentration_folder) to labels
                             labels.append(float(concentration_folder.split('mM')[0]))
+                            # print(labels)
+    lengths = [len(d) for d in data]
+    print("Max length:", max(lengths))
+    print("Min length:", min(lengths))
+    print("Unique lengths:", set(lengths))
+
     return np.array(data), np.array(labels)
 
-
 # Load dataset
-dataset_path = 'D:\ElectroChemicalData\Cu+'  # Change to your dataset folder path
+dataset_path = 'D:\AI Project with Parth\ElectroChemicalData\Cd'  # Change to your dataset folder path
 data, labels = load_dataset(dataset_path)
-print(data[0], data[1])
+# print(data[0], data[1])
 # print(data.flatten().shape)
 
 
@@ -85,7 +100,7 @@ print(data[0], data[1])
 train_data, test_data, train_labels, test_labels = train_test_split(data, labels, test_size=0.3, random_state=42)
 # Define the ANN model architecture
 model = Sequential([
-    Dense(64, activation='relu', input_shape=(4,)),
+    Dense(64, activation='relu', input_shape=(960,)),
     Dense(32, activation='relu'),
     Dense(1, activation='linear')
 ])
@@ -108,7 +123,7 @@ model.compile(loss='mse', optimizer=optimizer,
 # Train the model
 history = model.fit(train_data, train_labels, epochs=200, batch_size=8, validation_split=0.2,
                     callbacks=[early_stopping, lr_scheduler_callback], verbose=1)
-plt.style.use('seaborn')
+plt.style.use('ggplot')
 plt.figure(figsize=(6, 6))
 plt.plot(history.history['loss'], color='b', label="training loss")
 plt.plot(history.history['val_loss'], color='r', label="validation loss")
@@ -139,15 +154,8 @@ predictions_df = pd.DataFrame(np.ravel(predictions), columns=["Predictions"])
 comparison_df = pd.concat([pd.DataFrame(test_labels, columns=["Real Values"]), predictions_df], axis=1)
 print(comparison_df)
 # Visualize predictions against actual concentrations
-sharp_test_x = -0.52
-sharp_test_y = 10.85
-plat_test_x = -0.376
-plat_test_y = 8.28
-unrecog_values = []
-unrecog_test = []
-unrecog_values.append(sharp_test_x)
-unrecog_values.append(sharp_test_y)
-unrecog_values.append(plat_test_x)
-unrecog_values.append(plat_test_y)
-unrecog_test.append(unrecog_values)
-print(model.predict(np.array(unrecog_test)))
+unrecog_values = [-0.52, 10.85, -0.376, 8.28]
+padded_input = pad_sequence(unrecog_values, 960)
+unrecog_test = np.array([padded_input])
+print(model.predict(unrecog_test))
+
