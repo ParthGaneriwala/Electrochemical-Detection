@@ -75,7 +75,7 @@ def load_dataset(dataset_path):
 
 
 # Load dataset
-dataset_path = 'D:\ElectroChemicalData\Sharp'  # Change to your dataset folder path
+dataset_path = 'D:\ElectroChemicalData\Cu+'  # Change to your dataset folder path
 data, labels = load_dataset(dataset_path)
 print(data[0], data[1])
 # print(data.flatten().shape)
